@@ -22,7 +22,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Icon Include="$(MSBuildProjectDirectory)/../icon.jpg" />
+        <Icon Include="$(MSBuildProjectDirectory)/../icon.png" />
         <License Include="$(MSBuildProjectDirectory)/../LICENSE" />
         <Manifest Include="$(MSBuildProjectDirectory)/../manifest.json" />
     </ItemGroup>
