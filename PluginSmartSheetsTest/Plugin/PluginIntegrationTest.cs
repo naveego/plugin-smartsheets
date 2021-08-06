@@ -33,30 +33,30 @@ namespace PluginHubspotTest.Plugin
         {
             var settings = GetSettings(oAuth);
                 
-            var oAuthConfig = oAuth
-                ? new OAuthConfiguration
-                {
-                }
-                : new OAuthConfiguration
-                {
-                };
-            
-            var oAuthState = oAuth
-                ? new OAuthState
-                {
-                    RefreshToken = "", 
-                    Config = JsonConvert.SerializeObject(new OAuthConfig
-                    {
-                        RedirectUri = ""
-                    })
-                }
-                : new OAuthState();
+            // var oAuthConfig = oAuth
+            //     ? new OAuthConfiguration
+            //     {
+            //     }
+            //     : new OAuthConfiguration
+            //     {
+            //     };
+            //
+            // var oAuthState = oAuth
+            //     ? new OAuthState
+            //     {
+            //         RefreshToken = "", 
+            //         Config = JsonConvert.SerializeObject(new OAuthConfig
+            //         {
+            //             RedirectUri = ""
+            //         })
+            //     }
+            //     : new OAuthState();
             
             return new ConnectRequest
             {
                 SettingsJson = JsonConvert.SerializeObject(settings),
-                OauthConfiguration = oAuthConfig,
-                OauthStateJson = JsonConvert.SerializeObject(oAuthState)
+                // OauthConfiguration = oAuthConfig,
+                // OauthStateJson = JsonConvert.SerializeObject(oAuthState)
             };
         }
 
@@ -66,7 +66,7 @@ namespace PluginHubspotTest.Plugin
                 .SetHttpClient(new DefaultHttpClient())
                 .SetAccessToken(GetSettings().AccessToken)
                 .Build();
-            
+             
             IApiClient apiClient = new ApiClient(smartsheet, GetSettings());
             PaginatedResult<Sheet> sheets = await  apiClient.ListSheets();
 
