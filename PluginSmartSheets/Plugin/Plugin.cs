@@ -211,25 +211,6 @@ namespace PluginSmartSheets.Plugin
 
             Logger.SetLogPrefix("connect");
 
-            // get oAuth State
-            // OAuthState oAuthState;
-            // OAuthConfig oAuthConfig;
-            // try
-            // {
-            //     oAuthState = JsonConvert.DeserializeObject<OAuthState>(request.OauthStateJson);
-            //     oAuthConfig = JsonConvert.DeserializeObject<OAuthConfig>(oAuthState?.Config ?? "{}");
-            // }
-            // catch (Exception e)
-            // {
-            //     Logger.Error(e, e.Message, context);
-            //     return new ConnectResponse
-            //     {
-            //         OauthStateJson = request.OauthStateJson,
-            //         ConnectionError = "",
-            //         OauthError = e.Message,
-            //         SettingsError = ""
-            //     };
-            // }
 
             // validate settings passed in
             try
@@ -242,9 +223,7 @@ namespace PluginSmartSheets.Plugin
                 Logger.Error(e, e.Message, context);
                 return new ConnectResponse
                 {
-                    OauthStateJson = "",
                     ConnectionError = "",
-                    OauthError = "",
                     SettingsError = e.Message
                 };
             }
@@ -259,9 +238,7 @@ namespace PluginSmartSheets.Plugin
                 Logger.Error(e, e.Message, context);
                 return new ConnectResponse
                 {
-                    OauthStateJson = "",
                     ConnectionError = "",
-                    OauthError = "",
                     SettingsError = e.Message
                 };
             }
@@ -277,9 +254,7 @@ namespace PluginSmartSheets.Plugin
 
                 return new ConnectResponse
                 {
-                    OauthStateJson = "",
                     ConnectionError = e.Message,
-                    OauthError = "",
                     SettingsError = ""
                 };
             }
@@ -288,9 +263,7 @@ namespace PluginSmartSheets.Plugin
 
             return new ConnectResponse
             {
-                OauthStateJson = "",
                 ConnectionError = "",
-                OauthError = "",
                 SettingsError = ""
             };
         }
