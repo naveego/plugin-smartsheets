@@ -24,7 +24,18 @@ namespace PluginSmartSheets.API.Read
                     
                     try
                     {
-                        recordMap[property.Id] = row.Cells.ToList().Find(x => x.ColumnId.ToString() == property.Id).Value;
+                        Cell currCell = row.Cells.ToList().Find(x => x.ColumnId.ToString() == property.Id);
+                        
+                        //if GetPropertyType evaluates to a string type, convert object result to string
+                        //purpose is to handle some abstracted column types in SmartSheets which are sometimes obj, sometimes string
+                        
+                        if (Utility.GetType.GetPropertyType(currCell.ColumnType.ToString()) == PropertyType.String)
+                        {
+                            recordMap[property.Id] = currCell
+                                .Value.ToString();
+                        }
+                        
+                        recordMap[property.Id] = currCell.Value;
                         
                     }
                     catch (Exception e)

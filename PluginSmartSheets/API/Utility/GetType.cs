@@ -12,8 +12,8 @@ namespace PluginSmartSheets.API.Utility
                 case("DATE"):
                     return PropertyType.Date;
                 case("DATETIME"):
-                case("ABSTRACT_DATETIME"):
                     return PropertyType.Datetime;
+                case("ABSTRACT_DATETIME"):
                 case("CHECKBOX"):
                 case("CONTACT_LIST"):
                 case("MULTI_CONTACT_LIST"):
