@@ -37,6 +37,9 @@
       <Content Include="..\icon.png">
         <Link>plugin-smartsheets\icon.png</Link>
       </Content>
+      <Content Include="..\README.md">
+        <Link>plugin-smartsheets\README.md</Link>
+      </Content>
     </ItemGroup>
 
     <Target Name="ZipWindows" AfterTargets="Publish" Condition="$(Configuration) == 'Release' And Exists('$(MSBuildProjectDirectory)\bin\Release\netcoreapp3.1\win-x64\publish')">
