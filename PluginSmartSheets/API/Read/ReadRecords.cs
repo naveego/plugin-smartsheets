@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Naveego.Sdk.Plugins;
 using Newtonsoft.Json;
@@ -14,27 +15,21 @@ namespace PluginSmartSheets.API.Read
         public static async IAsyncEnumerable<Record> ReadRecordsAsync(IApiClient apiClient, Schema schema)
         {
             var sheet = await apiClient.GetSheet(schema.Id);
-
-            var columnIdMap = new Dictionary<object, string>();
-            
-            foreach (Column col in sheet.Columns)
-            {
-                columnIdMap.Add(col.Id, col.Title);
-            }
             
             foreach (Row row in sheet.Rows)
             {
                 var recordMap = new Dictionary<string, object>();
-
-                foreach (Cell cell in row.Cells)
+                foreach (var property in schema.Properties)
                 {
+                    
                     try
                     {
-                        recordMap[columnIdMap[cell.ColumnId]] = cell.DisplayValue;
+                        recordMap[property.Id] = row.Cells.ToList().Find(x => x.ColumnId.ToString() == property.Id).DisplayValue;
+                        
                     }
                     catch (Exception e)
                     {
-                        recordMap[columnIdMap[cell.ColumnId]] = "";
+                        recordMap[property.Id] = "";
                     }
                 }
                 yield return new Record

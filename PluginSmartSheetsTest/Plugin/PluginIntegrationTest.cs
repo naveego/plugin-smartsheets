@@ -377,8 +377,8 @@ namespace PluginHubspotTest.Plugin
             Assert.Equal(28, records.Count);
 
             var record = JsonConvert.DeserializeObject<Dictionary<string, object>>(records[0].DataJson);
-            Assert.Equal("Q2 Plan", record["Task Name"]);
-            Assert.Equal("23d", record["Duration"]);
+            Assert.Equal("Q2 Plan", record["6611977991677828"]);
+            Assert.Equal("23d", record["1404690922530692"]);
 
             // cleanup
             await channel.ShutdownAsync();
@@ -442,7 +442,71 @@ namespace PluginHubspotTest.Plugin
             await channel.ShutdownAsync();
             await server.ShutdownAsync();
         }
+[Fact]
+        public async Task ReadStreamTableSchemaTest()
+        {
+            // setup
+            Server server = new Server
+            {
+                Services = {Publisher.BindService(new PluginSmartSheets.Plugin.Plugin())},
+                Ports = {new ServerPort("localhost", 0, ServerCredentials.Insecure)}
+            };
+            server.Start();
 
+            var port = server.Ports.First().BoundPort;
+
+            var channel = new Channel($"localhost:{port}", ChannelCredentials.Insecure);
+            var client = new Publisher.PublisherClient(channel);
+
+            var connectRequest = GetConnectSettings();
+
+            var schemaRequest = new DiscoverSchemasRequest
+            {
+                Mode = DiscoverSchemasRequest.Types.Mode.All,
+            };
+            
+            var schemaRequest2 = new DiscoverSchemasRequest
+            {
+                Mode = DiscoverSchemasRequest.Types.Mode.Refresh,
+                ToRefresh = { }
+            };
+
+            var request = new ReadRequest()
+            {
+                DataVersions = new DataVersions
+                {
+                    JobId = "test"
+                },
+                JobId = "test",
+            };
+
+            // act
+            client.Connect(connectRequest);
+            var schemasResponse = client.DiscoverSchemas(schemaRequest);
+            schemaRequest2.ToRefresh.Add(schemasResponse.Schemas[0]);
+            var schemasResponse2 = client.DiscoverSchemas(schemaRequest2);
+            
+            request.Schema = schemasResponse2.Schemas[0];
+
+            var response = client.ReadStream(request);
+            var responseStream = response.ResponseStream;
+            var records = new List<Record>();
+
+            while (await responseStream.MoveNext())
+            {
+                records.Add(responseStream.Current);
+            }
+
+            // assert
+            Assert.Equal(28, records.Count);
+
+            var record = JsonConvert.DeserializeObject<Dictionary<string, object>>(records[0].DataJson);
+            Assert.Equal("Q2 Plan", record["6611977991677828"]);
+            Assert.Equal("23d", record["1404690922530692"]);
+            // cleanup
+            await channel.ShutdownAsync();
+            await server.ShutdownAsync();
+        }
         // [Fact]
         // public async Task ReadStreamRealTimeTest()
         // {

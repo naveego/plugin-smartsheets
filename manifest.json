@@ -10,7 +10,7 @@
   "kind": "publisher",
   "os": "$GOOS",
   "arch": "$GOARCH",
-  "accessGroups": [],
+  "accessGroups": ["aunsupport"],
   "canConfigure": true,
   "canProduceMultipleSchemas": true,
   "canAcceptQueryBasedSchemas": false,
