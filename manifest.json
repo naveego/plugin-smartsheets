@@ -1,6 +1,6 @@
 {
   "id": "plugin-smartsheets",
-  "displayName": "SmartSheetsg",
+  "displayName": "SmartSheets",
   "description": "Plugin for integrating data with SmartSheets.com",
   "apiVersion": "2",
   "versionDescription": "Version 2",
@@ -19,23 +19,23 @@
   "configSchema": {
     "ui": {
       "ui:order": [
-        "ApiKey"
+        "AccessToken"
       ],
-      "ApiKey": {
+      "AccessToken": {
         "ui:widget": "password"
       }
     },
     "schema": {
       "type": "object",
       "properties": {
-        "ApiKey" : {
+        "AccessToken" : {
           "type": "string",
-          "title": "API Key",
-          "description": "API key to use for authentication. Generate in SmartSheets Home -> Account -> Apps and Integrations... -> API Access."
+          "title": "Access Token",
+          "description": "Access Token key to use for authentication. Generate in SmartSheets Home -> Account -> Apps and Integrations... -> API Access."
         }
       },
       "required": [
-        "ApiKey"
+        "AccessToken"
       ]
     }
   }

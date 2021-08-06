@@ -12,7 +12,7 @@ namespace PluginHubspotTest.Helper
             // setup
             var settings = new Settings
             {
-               ClientId = "CLIENT_ID"
+               AccessToken = "TOKEN"
             };
 
             // act
