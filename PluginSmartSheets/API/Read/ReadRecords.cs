@@ -24,7 +24,7 @@ namespace PluginSmartSheets.API.Read
                     
                     try
                     {
-                        recordMap[property.Id] = row.Cells.ToList().Find(x => x.ColumnId.ToString() == property.Id).DisplayValue;
+                        recordMap[property.Id] = row.Cells.ToList().Find(x => x.ColumnId.ToString() == property.Id).Value;
                         
                     }
                     catch (Exception e)
