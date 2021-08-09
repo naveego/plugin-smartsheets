@@ -379,6 +379,8 @@ namespace PluginHubspotTest.Plugin
             var record = JsonConvert.DeserializeObject<Dictionary<string, object>>(records[0].DataJson);
             Assert.Equal("Q2 Plan", record["6611977991677828"]);
             Assert.Equal("23d", record["1404690922530692"]);
+            Assert.Equal("0.12", record["3656490736215940"]);
+            Assert.Equal(DateTime.Parse("12/28/2018 4:59:59 PM"), record["4782390643058564"]);
 
             // cleanup
             await channel.ShutdownAsync();

@@ -28,14 +28,15 @@ namespace PluginSmartSheets.API.Read
                         
                         //if GetPropertyType evaluates to a string type, convert object result to string
                         //purpose is to handle some abstracted column types in SmartSheets which are sometimes obj, sometimes string
+
+                        recordMap[property.Id] =
+                            (Utility.GetType.GetPropertyType(currCell.ColumnType.ToString()) == PropertyType.String)
+                                ? recordMap[property.Id] = currCell
+                                    .Value.ToString()
+                                : recordMap[property.Id] = currCell
+                                    .Value;
                         
-                        if (Utility.GetType.GetPropertyType(currCell.ColumnType.ToString()) == PropertyType.String)
-                        {
-                            recordMap[property.Id] = currCell
-                                .Value.ToString();
-                        }
                         
-                        recordMap[property.Id] = currCell.Value;
                         
                     }
                     catch (Exception e)
