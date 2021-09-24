@@ -220,7 +220,7 @@ namespace PluginSmartSheets.Plugin
             }
             catch (Exception e)
             {
-                Logger.Error(e, e.Message, context);
+                Logger.Error(e, e.Message);
                 return new ConnectResponse
                 {
                     ConnectionError = "",
@@ -235,7 +235,7 @@ namespace PluginSmartSheets.Plugin
             }
             catch (Exception e)
             {
-                Logger.Error(e, e.Message, context);
+                Logger.Error(e, e.Message);
                 return new ConnectResponse
                 {
                     ConnectionError = "",
@@ -250,7 +250,7 @@ namespace PluginSmartSheets.Plugin
             }
             catch (Exception e)
             {
-                Logger.Error(e, e.Message, context);
+                Logger.Error(e, e.Message);
 
                 return new ConnectResponse
                 {
