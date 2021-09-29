@@ -39,14 +39,14 @@ namespace PluginSmartSheets.API.Factory
             Client.AccessToken = Settings.AccessToken;
 
             return Client.SheetResources.ListSheets(
-                new List<SheetInclusion> {SheetInclusion.SHEET_VERSION}, null, null);
+                new List<SheetInclusion> {SheetInclusion.SHEET_VERSION}, new PaginationParameters(true, null,null), null);
         }
         
         public async Task<Sheet> GetSheet(string sheetId)
         {
             Client.AccessToken = Settings.AccessToken;
 
-            return Client.SheetResources.GetSheet(Int64.Parse(sheetId), null, null, null, null, null, null, null);
+            return Client.SheetResources.GetSheet(long.Parse(sheetId), null, null, null, null, null, null, null);
         }
         
         public async Task TestConnection()

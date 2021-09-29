@@ -13,9 +13,20 @@
   "accessGroups": [],
   "canConfigure": true,
   "canProduceMultipleSchemas": true,
-  "canAcceptQueryBasedSchemas": false,
+  "canAcceptQueryBasedSchemas": true,
   "canUseOAuth": false,
   "canWrite": false,
+  "querySchema": {
+    "ui": {
+      "ui:widget": "code",
+      "ui:options": {
+        "language": "sql"
+      }
+    },
+    "schema": {
+      "type": "string"
+    }
+  },
   "configSchema": {
     "ui": {
       "ui:order": [

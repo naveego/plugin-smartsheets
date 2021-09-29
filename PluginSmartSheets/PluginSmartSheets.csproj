@@ -28,12 +28,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="API\Replication" />
-      <Folder Include="API\Utility\EndpointHelperEndpoints" />
-      <Folder Include="API\Write" />
-    </ItemGroup>
-
-    <ItemGroup>
       <Content Include="..\icon.png">
         <Link>plugin-smartsheets\icon.png</Link>
       </Content>

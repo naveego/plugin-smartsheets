@@ -14,7 +14,14 @@ namespace PluginSmartSheets.API.Discover
         {
             foreach (var schema in refreshSchemas)
             {
-                var sheet = await apiClient.GetSheet(schema.Id);
+                var sheetId = schema.Id;
+
+                if (!string.IsNullOrWhiteSpace(schema.Query))
+                {
+                    sheetId = schema.Query;
+                }
+                
+                var sheet = await apiClient.GetSheet(sheetId);
                 
                 foreach (Column col in sheet.Columns)
                 {
@@ -31,10 +38,8 @@ namespace PluginSmartSheets.API.Discover
                     schema?.Properties.Add(property);
                 }
 
-                var refreshSchema = schema;
-                
                 // get sample and count
-                yield return await AddSampleAndCount(apiClient, refreshSchema, sampleSize);
+                yield return await AddSampleAndCount(apiClient, schema, sampleSize);
             }
         }
     }

@@ -19,23 +19,20 @@ namespace PluginSmartSheets.API.Discover
             int sampleSize = 5)
         {
             PaginatedResult<Sheet> sheets = await apiClient.ListSheets();
-            
-            for (var i = 0;
-                i < sheets.TotalCount;
-                i++)
+
+            foreach (var sheetData in sheets.Data)
             {
-                
                 var schema = new Schema
                 {
-                    Id = sheets.Data[i].Id.ToString(),
-                    Name = sheets.Data[i].Name,
+                    Id = sheetData.Id.ToString(),
+                    Name = sheetData.Name,
                     Description = "",
                     PublisherMetaJson = ""
                 };
-                
+
                 var sheet = await apiClient.GetSheet(schema.Id);
-                
-                foreach (Column col in sheet.Columns)
+
+                foreach (var col in sheet.Columns)
                 {
                     var property = new Property
                     {
@@ -46,10 +43,10 @@ namespace PluginSmartSheets.API.Discover
                         Type = Utility.GetType.GetPropertyType(col.Type.ToString()),
                         TypeAtSource = col.Type.ToString()
                     };
-                    
+
                     schema?.Properties.Add(property);
                 }
-                
+
                 yield return await AddSampleAndCount(apiClient, schema, sampleSize);
             }
         }
@@ -62,7 +59,6 @@ namespace PluginSmartSheets.API.Discover
             schema.Sample.AddRange(await records.ToListAsync());
 
             return schema;
-            
         }
     }
 }

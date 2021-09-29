@@ -21,7 +21,7 @@ namespace PluginHubspotTest.Plugin
 {
     public class PluginIntegrationTest
     {
-        private Settings GetSettings(bool oAuth = true)
+        private Settings GetSettings()
         {
             return new Settings
                 {
@@ -29,34 +29,13 @@ namespace PluginHubspotTest.Plugin
                 };
         }
 
-        private ConnectRequest GetConnectSettings(bool oAuth = false)
+        private ConnectRequest GetConnectSettings()
         {
-            var settings = GetSettings(oAuth);
-                
-            // var oAuthConfig = oAuth
-            //     ? new OAuthConfiguration
-            //     {
-            //     }
-            //     : new OAuthConfiguration
-            //     {
-            //     };
-            //
-            // var oAuthState = oAuth
-            //     ? new OAuthState
-            //     {
-            //         RefreshToken = "", 
-            //         Config = JsonConvert.SerializeObject(new OAuthConfig
-            //         {
-            //             RedirectUri = ""
-            //         })
-            //     }
-            //     : new OAuthState();
-            
+            var settings = GetSettings();
+
             return new ConnectRequest
             {
                 SettingsJson = JsonConvert.SerializeObject(settings),
-                // OauthConfiguration = oAuthConfig,
-                // OauthStateJson = JsonConvert.SerializeObject(oAuthState)
             };
         }
 
@@ -70,8 +49,6 @@ namespace PluginHubspotTest.Plugin
             IApiClient apiClient = new ApiClient(smartsheet, GetSettings());
             PaginatedResult<Sheet> sheets = await  apiClient.ListSheets();
 
-            
-            
             var schema = new Schema();
             
             for (var i = 0;
@@ -168,38 +145,6 @@ namespace PluginHubspotTest.Plugin
             await channel.ShutdownAsync();
             await server.ShutdownAsync();
         }
-        
-        [Fact]
-        public async Task ConnectOAuthTest()
-        {
-            // setup
-            Server server = new Server
-            {
-                Services = {Publisher.BindService(new PluginSmartSheets.Plugin.Plugin())},
-                Ports = {new ServerPort("localhost", 0, ServerCredentials.Insecure)}
-            };
-            server.Start();
-
-            var port = server.Ports.First().BoundPort;
-
-            var channel = new Channel($"localhost:{port}", ChannelCredentials.Insecure);
-            var client = new Publisher.PublisherClient(channel);
-
-            var request = GetConnectSettings(true);
-
-            // act
-            var response = client.Connect(request);
-
-            // assert
-            Assert.IsType<ConnectResponse>(response);
-            Assert.Equal("", response.SettingsError);
-            Assert.Equal("", response.ConnectionError);
-            Assert.Equal("", response.OauthError);
-
-            // cleanup
-            await channel.ShutdownAsync();
-            await server.ShutdownAsync();
-        }
 
         [Fact]
         public async Task DiscoverSchemasAllTest()
@@ -217,7 +162,7 @@ namespace PluginHubspotTest.Plugin
             var channel = new Channel($"localhost:{port}", ChannelCredentials.Insecure);
             var client = new Publisher.PublisherClient(channel);
 
-            var connectRequest = GetConnectSettings(true);
+            var connectRequest = GetConnectSettings();
 
             var request = new DiscoverSchemasRequest
             {
@@ -270,6 +215,62 @@ namespace PluginHubspotTest.Plugin
 
         [Fact]
         public async Task DiscoverSchemasRefreshTest()
+        {
+            // setup
+            Server server = new Server
+            {
+                Services = {Publisher.BindService(new PluginSmartSheets.Plugin.Plugin())},
+                Ports = {new ServerPort("localhost", 0, ServerCredentials.Insecure)}
+            };
+            server.Start();
+
+            var port = server.Ports.First().BoundPort;
+
+            var channel = new Channel($"localhost:{port}", ChannelCredentials.Insecure);
+            var client = new Publisher.PublisherClient(channel);
+
+            var connectRequest = GetConnectSettings();
+
+            var request = new DiscoverSchemasRequest
+            {
+                Mode = DiscoverSchemasRequest.Types.Mode.Refresh,
+                SampleSize = 10,
+                ToRefresh =
+                {
+                    await GetTestSchema("Project Launch Plan")
+                }
+            };
+
+            // act
+            client.Connect(connectRequest);
+            var response = client.DiscoverSchemas(request);
+
+            // assert
+            Assert.IsType<DiscoverSchemasResponse>(response);
+             Assert.Equal(1, response.Schemas.Count);
+            //
+             var schema = response.Schemas[0];
+             Assert.Equal("8787893276698500", schema.Id);
+            // Assert.Equal("test", schema.Name);
+            // Assert.Equal("", schema.Query);
+             Assert.Equal(10, schema.Sample.Count);
+             Assert.Equal(12, schema.Properties.Count);
+            //
+             var property = schema.Properties[0];
+             Assert.Equal("6611977991677828", property.Id);
+             Assert.Equal("Task Name", property.Name);
+             Assert.Equal("", property.Description);
+             Assert.Equal(PropertyType.String, property.Type);
+             Assert.False(property.IsKey);
+             Assert.True(property.IsNullable);
+
+            // cleanup
+            await channel.ShutdownAsync();
+            await server.ShutdownAsync();
+        }
+        
+        [Fact]
+        public async Task DiscoverSchemasRefreshQueryTest()
         {
             // setup
             Server server = new Server
