@@ -293,7 +293,11 @@ namespace PluginHubspotTest.Plugin
                 SampleSize = 10,
                 ToRefresh =
                 {
-                    await GetTestSchema("Project Launch Plan")
+                    new Schema
+                    {
+                        Id = "custom",
+                        Query = "8263099812734852"
+                    }
                 }
             };
 
@@ -306,7 +310,7 @@ namespace PluginHubspotTest.Plugin
              Assert.Equal(1, response.Schemas.Count);
             //
              var schema = response.Schemas[0];
-             Assert.Equal("8787893276698500", schema.Id);
+             Assert.Equal("8263099812734852", schema.Id);
             // Assert.Equal("test", schema.Name);
             // Assert.Equal("", schema.Query);
              Assert.Equal(10, schema.Sample.Count);

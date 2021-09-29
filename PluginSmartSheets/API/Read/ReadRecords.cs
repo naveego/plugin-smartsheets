@@ -14,18 +14,24 @@ namespace PluginSmartSheets.API.Read
     {
         public static async IAsyncEnumerable<Record> ReadRecordsAsync(IApiClient apiClient, Schema schema)
         {
-            var sheet = await apiClient.GetSheet(schema.Id);
-            
+            var sheetId = schema.Id;
+
+            if (!string.IsNullOrWhiteSpace(schema.Query))
+            {
+                sheetId = schema.Query;
+            }
+
+            var sheet = await apiClient.GetSheet(sheetId);
+
             foreach (Row row in sheet.Rows)
             {
                 var recordMap = new Dictionary<string, object>();
                 foreach (var property in schema.Properties)
                 {
-                    
                     try
                     {
                         Cell currCell = row.Cells.ToList().Find(x => x.ColumnId.ToString() == property.Id);
-                        
+
                         //if GetPropertyType evaluates to a string type, convert object result to string
                         //purpose is to handle some abstracted column types in SmartSheets which are sometimes obj, sometimes string
 
@@ -35,20 +41,18 @@ namespace PluginSmartSheets.API.Read
                                     .Value.ToString()
                                 : recordMap[property.Id] = currCell
                                     .Value;
-                        
-                        
-                        
                     }
                     catch (Exception e)
                     {
                         recordMap[property.Id] = "";
                     }
                 }
+
                 yield return new Record
                 {
                     Action = Record.Types.Action.Upsert,
                     DataJson = JsonConvert.SerializeObject(recordMap)
-                };       
+                };
             }
         }
     }
