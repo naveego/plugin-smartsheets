@@ -34,6 +34,10 @@ namespace PluginSmartSheets.API.Factory
 
         }
 
+        public async Task<bool> GetIgnoreRowsWithoutKeyValues()
+        {
+            return Settings.IgnoreRowsWithoutKeyValues;
+        }
         public async Task<PaginatedResult<Sheet>> ListSheets()
         {
             Client.AccessToken = Settings.AccessToken;

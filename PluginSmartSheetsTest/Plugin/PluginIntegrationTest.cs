@@ -25,7 +25,8 @@ namespace PluginHubspotTest.Plugin
         {
             return new Settings
                 {
-                    AccessToken = ""
+                    AccessToken = "",
+                    IgnoreRowsWithoutKeyValues = true
                 };
         }
 
@@ -176,18 +177,18 @@ namespace PluginHubspotTest.Plugin
 
             // assert
             Assert.IsType<DiscoverSchemasResponse>(response);
-            Assert.Equal(4, response.Schemas.Count);
+            Assert.Equal(3, response.Schemas.Count);
             //
              var schema = response.Schemas[0];
-             Assert.Equal($"8787893276698500", schema.Id);
-             Assert.Equal("Project Launch Plan", schema.Name);
+             Assert.Equal($"3326348329543556", schema.Id);
+             Assert.Equal("QA 1", schema.Name);
             // Assert.Equal($"", schema.Query);
             // Assert.Equal(10, schema.Sample.Count);
             // Assert.Equal(17, schema.Properties.Count);
             //
              var property = schema.Properties[0];
-             Assert.Equal("6611977991677828", property.Id);
-             Assert.Equal("Task Name", property.Name);
+             Assert.Equal("614533442103172", property.Id);
+             Assert.Equal("Primary Column", property.Name);
             // Assert.Equal("", property.Description);
             // Assert.Equal(PropertyType.String, property.Type);
             // Assert.False(property.IsKey);
@@ -250,15 +251,15 @@ namespace PluginHubspotTest.Plugin
              Assert.Equal(1, response.Schemas.Count);
             //
              var schema = response.Schemas[0];
-             Assert.Equal("8787893276698500", schema.Id);
+             Assert.Equal("3326348329543556", schema.Id);
             // Assert.Equal("test", schema.Name);
             // Assert.Equal("", schema.Query);
-             Assert.Equal(10, schema.Sample.Count);
-             Assert.Equal(12, schema.Properties.Count);
+             Assert.Equal(3, schema.Sample.Count);
+             Assert.Equal(6, schema.Properties.Count);
             //
              var property = schema.Properties[0];
-             Assert.Equal("6611977991677828", property.Id);
-             Assert.Equal("Task Name", property.Name);
+             Assert.Equal("614533442103172", property.Id);
+             Assert.Equal("Primary Column", property.Name);
              Assert.Equal("", property.Description);
              Assert.Equal(PropertyType.String, property.Type);
              Assert.False(property.IsKey);
@@ -295,8 +296,8 @@ namespace PluginHubspotTest.Plugin
                 {
                     new Schema
                     {
-                        Id = "custom",
-                        Query = "8263099812734852"
+                        Id = "Custom Table 1",
+                        Query = "QA 1,QA 1 Same"
                     }
                 }
             };
@@ -310,15 +311,15 @@ namespace PluginHubspotTest.Plugin
              Assert.Equal(1, response.Schemas.Count);
             //
              var schema = response.Schemas[0];
-             Assert.Equal("8263099812734852", schema.Id);
+             Assert.Equal("Custom Table 1", schema.Id);
             // Assert.Equal("test", schema.Name);
             // Assert.Equal("", schema.Query);
-             Assert.Equal(10, schema.Sample.Count);
-             Assert.Equal(12, schema.Properties.Count);
+             Assert.Equal(6, schema.Sample.Count);
+             Assert.Equal(6, schema.Properties.Count);
             //
              var property = schema.Properties[0];
-             Assert.Equal("6611977991677828", property.Id);
-             Assert.Equal("Task Name", property.Name);
+             Assert.Equal("614533442103172", property.Id);
+             Assert.Equal("Primary Column", property.Name);
              Assert.Equal("", property.Description);
              Assert.Equal(PropertyType.String, property.Type);
              Assert.False(property.IsKey);
@@ -345,7 +346,7 @@ namespace PluginHubspotTest.Plugin
             var channel = new Channel($"localhost:{port}", ChannelCredentials.Insecure);
             var client = new Publisher.PublisherClient(channel);
 
-            var schema = await GetTestSchema();
+            var schema = await GetTestSchema("QA 1");
 
             var connectRequest = GetConnectSettings();
 
@@ -354,6 +355,19 @@ namespace PluginHubspotTest.Plugin
                 Mode = DiscoverSchemasRequest.Types.Mode.Refresh,
                 ToRefresh = {schema}
             };
+            
+            // var schemaRequest = new DiscoverSchemasRequest
+            // {
+            //     Mode = DiscoverSchemasRequest.Types.Mode.Refresh,
+            //     ToRefresh =
+            //     {
+            //         new Schema
+            //         {
+            //             Id = "Custom Table 1",
+            //             Query = "QA 1,QA 1 Same"
+            //         }
+            //     }
+            // };
 
             var request = new ReadRequest()
             {
@@ -379,13 +393,15 @@ namespace PluginHubspotTest.Plugin
             }
 
             // assert
-            Assert.Equal(28, records.Count);
+            Assert.Equal(3, records.Count);
 
             var record = JsonConvert.DeserializeObject<Dictionary<string, object>>(records[0].DataJson);
-            Assert.Equal("Q2 Plan", record["6611977991677828"]);
-            Assert.Equal("23d", record["1404690922530692"]);
-            Assert.Equal("0.12", record["3656490736215940"]);
-            Assert.Equal(DateTime.Parse("12/28/2018 4:59:59 PM"), record["4782390643058564"]);
+            Assert.Equal("data1", record["Primary Column"]);
+            Assert.Equal("data2", record["Column2"]);
+            Assert.Equal("3", record["Column3"]);
+            Assert.Equal("col4", record["Column4"]);
+            Assert.Equal("5", record["Column5"]);
+            Assert.Equal("data6", record["Column6"]);
 
             // cleanup
             await channel.ShutdownAsync();
@@ -505,11 +521,11 @@ namespace PluginHubspotTest.Plugin
             }
 
             // assert
-            Assert.Equal(28, records.Count);
+            Assert.Equal(3, records.Count);
 
             var record = JsonConvert.DeserializeObject<Dictionary<string, object>>(records[0].DataJson);
-            Assert.Equal("Q2 Plan", record["6611977991677828"]);
-            Assert.Equal("23d", record["1404690922530692"]);
+            Assert.Equal("data1", record["Primary Column"]);
+            Assert.Equal("data2", record["Column2"]);
             // cleanup
             await channel.ShutdownAsync();
             await server.ShutdownAsync();

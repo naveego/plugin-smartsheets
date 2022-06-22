@@ -12,5 +12,6 @@ namespace PluginSmartSheets.API.Factory
         Task<PaginatedResult<Sheet>> ListSheets();
 
         Task<Sheet> GetSheet(string sheetId);
+        Task<bool> GetIgnoreRowsWithoutKeyValues();
     }
 }

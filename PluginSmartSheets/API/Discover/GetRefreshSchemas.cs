@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using Google.Protobuf.Collections;
 using Naveego.Sdk.Plugins;
 using PluginSmartSheets.API.Utility;
@@ -18,28 +19,59 @@ namespace PluginSmartSheets.API.Discover
 
                 if (!string.IsNullOrWhiteSpace(schema.Query))
                 {
-                    sheetId = schema.Query;
-                }
-                
-                var sheet = await apiClient.GetSheet(sheetId);
-                
-                foreach (Column col in sheet.Columns)
-                {
-                    var property = new Property
-                    {
-                        Id = col.Id.ToString(),
-                        Name = col.Title,
-                        IsKey = false,
-                        IsNullable = true,
-                        Type = Utility.GetType.GetPropertyType(col.Type.ToString()),
-                        TypeAtSource = col.Type.ToString(),
-                    };
-                    
-                    schema?.Properties.Add(property);
-                }
+                    var runningPropertiesNames = new List<string>() { };
+                    var allSheets = await apiClient.ListSheets();
 
-                // get sample and count
-                yield return await AddSampleAndCount(apiClient, schema, sampleSize);
+                    var sheetNames = schema.Query.Split(',');
+                    foreach (var sheetName in sheetNames)
+                    {
+                        var unsafeSheet = allSheets.Data.FirstOrDefault(x => x.Name == sheetName);
+                        var sheet = await apiClient.GetSheet(unsafeSheet.Id.ToString());
+
+                        foreach (Column col in sheet.Columns)
+                        {
+                            var property = new Property
+                            {
+                                Id = col.Id.ToString(),
+                                Name = col.Title,
+                                IsKey = false,
+                                IsNullable = true,
+                                Type = Utility.GetType.GetPropertyType(col.Type.ToString()),
+                                TypeAtSource = col.Type.ToString(),
+                            };
+                            if (!runningPropertiesNames.Contains(property.Name))
+                            {
+                                schema?.Properties.Add(property);
+                                runningPropertiesNames.Add(property.Name);
+                            }
+                        }
+                    }
+
+                    // get sample and count
+                    yield return await AddSampleAndCount(apiClient, schema, sampleSize);
+                }
+                else
+                {
+
+                    var sheet = await apiClient.GetSheet(sheetId);
+
+                    foreach (Column col in sheet.Columns)
+                    {
+                        var property = new Property
+                        {
+                            Id = col.Id.ToString(),
+                            Name = col.Title,
+                            IsKey = false,
+                            IsNullable = true,
+                            Type = Utility.GetType.GetPropertyType(col.Type.ToString()),
+                            TypeAtSource = col.Type.ToString(),
+                        };
+                        schema?.Properties.Add(property);
+                    }
+
+                    // get sample and count
+                    yield return await AddSampleAndCount(apiClient, schema, sampleSize);
+                }
             }
         }
     }

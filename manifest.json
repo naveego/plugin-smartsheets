@@ -30,7 +30,8 @@
   "configSchema": {
     "ui": {
       "ui:order": [
-        "AccessToken"
+        "AccessToken",
+        "IgnoreRowsWithoutKeyValues"
       ],
       "AccessToken": {
         "ui:widget": "password"
@@ -43,6 +44,11 @@
           "type": "string",
           "title": "Access Token",
           "description": "Access Token key to use for authentication. Generate in SmartSheets Home -> Account -> Apps and Integrations... -> API Access."
+        },
+        "IgnoreRowsWithoutKeyValues":{
+          "type": "boolean",
+          "title": "Ignore Rows Without Key Values",
+          "description": "Check this to ignore rows with no value in a key/identifier column"
         }
       },
       "required": [
