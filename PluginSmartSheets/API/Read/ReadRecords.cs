@@ -95,16 +95,16 @@ namespace PluginSmartSheets.API.Read
                             {
                                 validRow = false;
                             }
-                            recordMap[property.Name] =
+                            recordMap[property.Id] =
                                 (Utility.GetType.GetPropertyType(currCell.ColumnType.ToString()) == PropertyType.String)
-                                    ? recordMap[property.Name] = currCell
+                                    ? recordMap[property.Id] = currCell
                                         .Value.ToString()
-                                    : recordMap[property.Name] = currCell
+                                    : recordMap[property.Id] = currCell
                                         .Value;
                         }
                         catch (Exception e)
                         {
-                            recordMap[property.Name] = "";
+                            recordMap[property.Id] = "";
                         }
                     }
 
